@@ -19,6 +19,7 @@ var numbers = []string{"zero", "one", "two", "three", "four", "five", "six", "se
 
 func main() {
 	sum := 0
+	sum2 := 0
 	f, err := os.Open("cmd/day1/data1.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +28,8 @@ func main() {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		digit, err := decodeLine(scanner.Text())
+		line := scanner.Text()
+		digit, err := decodeLine(line)
 		if err != nil {
 			if errors.Is(err, ErrNoDigitFound) {
 				continue
@@ -35,30 +37,20 @@ func main() {
 			log.Fatal(err)
 		}
 		sum = sum + digit
+
+		digit2, err := decodeLine(fixLine(line))
+		if err != nil {
+			if errors.Is(err, ErrNoDigitFound) {
+				continue
+			}
+			log.Fatal(err)
+		}
+		sum2 = sum2 + digit2
 	}
 
 	fmt.Printf("the decoded value for part one is [%d]\n", sum)
 
-	sum = 0
-	f2, err := os.Open("cmd/day1/data2.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f2.Close()
-
-	scanner = bufio.NewScanner(f2)
-	for scanner.Scan() {
-		digit, err := decodeLine(fixLine(scanner.Text()))
-		if err != nil {
-			if errors.Is(err, ErrNoDigitFound) {
-				continue
-			}
-			log.Fatal(err)
-		}
-		sum = sum + digit
-	}
-
-	fmt.Printf("the decoded value for part two is [%d]\n", sum)
+	fmt.Printf("the decoded value for part two is [%d]\n", sum2)
 }
 
 func fixLine(line string) string {
@@ -67,11 +59,12 @@ func fixLine(line string) string {
 		re := regexp.MustCompile(num)
 		regs = append(regs, re)
 	}
-
 	for i, re := range regs {
-		line = re.ReplaceAllString(line, fmt.Sprintf("%d", i))
-	}
+		//fmt.Printf("%s => ", line)
+		line = re.ReplaceAllString(line, strconv.Itoa(i))
+		//fmt.Printf("%s\n", line)
 
+	}
 	return line
 }
 
