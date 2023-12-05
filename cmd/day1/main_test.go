@@ -63,3 +63,21 @@ func Test_getNumber(t *testing.T) {
 		})
 	}
 }
+
+func Test_fixLine(t *testing.T) {
+	tests := []struct {
+		name string
+		line string
+		want string
+	}{
+		{"valid 1", "onetesttwo", "1test2"},
+		{"valid 1", "testzerofivetest", "test05test"},
+		{"valid 1", "nothing", "nothing"},
+		{"valid 1", "alphatesttwotestsevenbeta", "alphatest2test7beta"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, fixLine(tt.line), "fixLine(%v)", tt.line)
+		})
+	}
+}
